@@ -4,6 +4,8 @@ the staff-only Claude content tools. Kept in one services module (not
 spread across views) so the retrieval/prompt-building logic is testable
 and reusable independent of the HTTP layer.
 """
+import re
+
 from django.db.models import Q
 
 from apps.history.models import CultureEntry, HistoricalEvent, Leader
@@ -14,6 +16,40 @@ from .providers.ollama_client import generate as ollama_generate
 
 MAX_SOURCES = 6
 
+# Common English words that carry no search signal on their own -- without
+# filtering these, a question like "Who is the current Council Chairman
+# of Agatu?" would search for "who", "is", "the", "of" individually,
+# matching almost everything and drowning out the words that actually
+# matter ("Council", "Chairman", "Agatu").
+STOPWORDS = {
+    "the", "a", "an", "is", "are", "was", "were", "who", "what", "when",
+    "where", "why", "how", "of", "in", "on", "at", "to", "for", "and",
+    "or", "do", "does", "did", "has", "have", "had", "current", "please",
+    "tell", "me", "about", "can", "you", "i", "it", "this", "that",
+}
+
+
+def _extract_keywords(query: str) -> list:
+    """
+    Splits a natural-language question into the words worth searching
+    on. Deliberately simple (no NLP library) -- lowercases, strips
+    punctuation, drops stopwords and very short words.
+    """
+    words = re.findall(r"[a-zA-Z']+", query.lower())
+    keywords = [w for w in words if len(w) > 2 and w not in STOPWORDS]
+    # If filtering removed everything (e.g. a very short question), fall
+    # back to the raw words rather than searching on nothing.
+    return keywords or words
+
+
+def _keyword_query(field_names: list, keywords: list) -> Q:
+    """Builds a Q object matching ANY keyword in ANY of the given fields."""
+    q = Q()
+    for field in field_names:
+        for word in keywords:
+            q |= Q(**{f"{field}__icontains": word})
+    return q
+
 
 def _search_agatu_content(query: str):
     """
@@ -22,41 +58,45 @@ def _search_agatu_content(query: str):
     pgvector similarity later if the content library grows large enough
     that keyword matching starts missing relevant results.
     """
+    keywords = _extract_keywords(query)
+    if not keywords:
+        return []
+
     sources = []
 
     leaders = Leader.objects.filter(
-        Q(full_name__icontains=query)
-        | Q(biography__icontains=query)
-        | Q(achievements__icontains=query)
-    )[:MAX_SOURCES]
+        _keyword_query(["full_name", "title", "biography", "achievements"], keywords)
+    ).distinct()[:MAX_SOURCES]
     for leader in leaders:
         sources.append(
             {"type": "leader", "title": f"{leader.full_name} ({leader.title})", "text": leader.biography}
         )
 
     events = HistoricalEvent.objects.filter(
-        Q(title__icontains=query) | Q(summary__icontains=query)
-    )[:MAX_SOURCES]
+        _keyword_query(["title", "summary"], keywords)
+    ).distinct()[:MAX_SOURCES]
     for event in events:
         sources.append(
             {"type": "historical_event", "title": f"{event.year} — {event.title}", "text": event.summary}
         )
 
     culture = CultureEntry.objects.filter(
-        Q(title__icontains=query) | Q(local_text__icontains=query) | Q(english_meaning__icontains=query)
-    )[:MAX_SOURCES]
+        _keyword_query(["title", "local_text", "english_meaning"], keywords)
+    ).distinct()[:MAX_SOURCES]
     for entry in culture:
         sources.append({"type": "culture", "title": entry.title, "text": entry.english_meaning})
 
     posts = NewsPost.objects.filter(is_published=True).filter(
-        Q(title__icontains=query) | Q(body__icontains=query)
-    )[:MAX_SOURCES]
+        _keyword_query(["title", "body"], keywords)
+    ).distinct()[:MAX_SOURCES]
     for post in posts:
         sources.append(
             {"type": "news", "title": post.title, "text": post.excerpt or post.body[:300]}
         )
 
-    flashes = NewsFlash.objects.filter(is_active=True).filter(headline__icontains=query)[:MAX_SOURCES]
+    flashes = NewsFlash.objects.filter(is_active=True).filter(
+        _keyword_query(["headline"], keywords)
+    ).distinct()[:MAX_SOURCES]
     for flash in flashes:
         sources.append({"type": "news_flash", "title": flash.headline, "text": flash.headline})
 
