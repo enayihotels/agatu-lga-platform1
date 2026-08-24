@@ -1,11 +1,6 @@
 import { z } from "zod";
 
-// These mirror the history app's models field-for-field (full
-// passthrough), matching the pattern every other serializer in this
-// project follows. Worth double-checking against the actual
-// apps/history/serializers.py output once the frontend is wired to
-// real data, in case any field was intentionally excluded there.
-
+// Mirrors LeaderSerializer.
 export const leaderSchema = z.object({
   id: z.number(),
   full_name: z.string(),
@@ -16,14 +11,14 @@ export const leaderSchema = z.object({
   biography: z.string(),
   achievements: z.string(),
   ward: z.number().nullable(),
+  ward_name: z.string().nullable(),
   is_current: z.boolean(),
-  created_at: z.string(),
-  updated_at: z.string(),
 });
 
 export type Leader = z.infer<typeof leaderSchema>;
 export const leaderListSchema = z.array(leaderSchema);
 
+// Mirrors HistoricalEventSerializer.
 export const historicalEventSchema = z.object({
   id: z.number(),
   title: z.string(),
@@ -32,13 +27,13 @@ export const historicalEventSchema = z.object({
   summary: z.string(),
   image: z.string().nullable(),
   related_leader: z.number().nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  related_leader_name: z.string().nullable(),
 });
 
 export type HistoricalEvent = z.infer<typeof historicalEventSchema>;
 export const historicalEventListSchema = z.array(historicalEventSchema);
 
+// Mirrors CultureEntrySerializer.
 export const cultureCategorySchema = z.enum([
   "language",
   "festival",
@@ -58,8 +53,6 @@ export const cultureEntrySchema = z.object({
   context_notes: z.string(),
   audio_pronunciation: z.string().nullable(),
   image: z.string().nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
 });
 
 export type CultureEntry = z.infer<typeof cultureEntrySchema>;
