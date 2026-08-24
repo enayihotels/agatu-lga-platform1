@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/*
+  Agatu LGA design tokens. Tailwind v4 uses CSS-based theming (no
+  tailwind.config.js needed) -- these custom properties become usable
+  as e.g. bg-agatu-river, text-agatu-earth, etc. throughout the app.
+
+  Palette rationale: earth tones for the land/agriculture identity,
+  a river-blue and farmland-green pair as the primary accent colors
+  (Agatu sits on the Benue River and is a farming community), with a
+  warm amber reserved for alerts/flood-warning UI so it reads as
+  distinct and urgent against the calmer base palette.
+*/
+@theme {
+  --color-agatu-earth-50: #faf6f1;
+  --color-agatu-earth-100: #f0e6d8;
+  --color-agatu-earth-200: #e0cbb0;
+  --color-agatu-earth-300: #cca87d;
+  --color-agatu-earth-400: #b6864f;
+  --color-agatu-earth-500: #9c6c37;
+  --color-agatu-earth-600: #7d552c;
+  --color-agatu-earth-700: #614225;
+  --color-agatu-earth-800: #48311c;
+  --color-agatu-earth-900: #302113;
+
+  --color-agatu-river-50: #eef7f7;
+  --color-agatu-river-100: #d3ebec;
+  --color-agatu-river-200: #a7d7d9;
+  --color-agatu-river-300: #74bec1;
+  --color-agatu-river-400: #45a0a4;
+  --color-agatu-river-500: #2d8286;
+  --color-agatu-river-600: #23666a;
+  --color-agatu-river-700: #1c5054;
+  --color-agatu-river-800: #163d40;
+  --color-agatu-river-900: #0f2a2c;
+
+  --color-agatu-farm-50: #f2f8ee;
+  --color-agatu-farm-100: #e0eed4;
+  --color-agatu-farm-200: #c1ddab;
+  --color-agatu-farm-300: #9cc87d;
+  --color-agatu-farm-400: #78ae56;
+  --color-agatu-farm-500: #5c923d;
+  --color-agatu-farm-600: #47732f;
+  --color-agatu-farm-700: #385a26;
+  --color-agatu-farm-800: #2b451e;
+  --color-agatu-farm-900: #1e3115;
+
+  /* Reserved for EmergencyAlert severity UI -- kept visually distinct
+     from the calmer earth/river/farm palette above so alerts always
+     read as urgent, never blend into ordinary content. */
+  --color-agatu-alert-info: #2d8286;
+  --color-agatu-alert-warning: #c47f1f;
+  --color-agatu-alert-critical: #b3372c;
+
+  --font-sans:
+    "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+body {
+  @apply bg-agatu-earth-50 text-agatu-earth-900 antialiased;
+}
