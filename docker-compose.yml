@@ -1,4 +1,4 @@
-﻿services:
+services:
   db:
     image: postgres:16
     environment:
@@ -37,9 +37,23 @@
       redis:
         condition: service_started
 
+  celery_worker:
+    build:
+      context: ./backend
+      args:
+        REQUIREMENTS_FILE: requirements/local.txt
+    command: celery -A config worker -l info
+    volumes:
+      - ./backend:/app
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   # --- Added in later phases, listed here so docker-compose.yml only
   # needs small diffs as we go instead of a full rewrite each phase ---
-  # celery_worker:
   # celery_beat:
   # ollama:
   # frontend:

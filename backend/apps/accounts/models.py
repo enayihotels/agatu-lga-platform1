@@ -1,5 +1,9 @@
-﻿from django.contrib.auth.models import AbstractUser
+import random
+from datetime import timedelta
+
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 
 
 class Role(models.TextChoices):
@@ -19,7 +23,7 @@ class Role(models.TextChoices):
 
 class User(AbstractUser):
     """
-    Custom user model â€” must exist before the first migration so future
+    Custom user model — must exist before the first migration so future
     role/profile fields never require a risky mid-project user-model swap.
     """
     role = models.CharField(
@@ -32,9 +36,14 @@ class User(AbstractUser):
         blank=True,
         help_text="Used for Twilio SMS alerts. Include country code, e.g. +234...",
     )
-    # Ward is added as a string reference now; Phase 2 introduces the real
-    # wards.Ward model and this becomes a ForeignKey via migration.
-    ward_name = models.CharField(max_length=100, blank=True)
+    ward = models.ForeignKey(
+        "wards.Ward",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="residents",
+        help_text="The Agatu ward this account is associated with.",
+    )
 
     is_phone_verified = models.BooleanField(default=False)
     receives_sms_alerts = models.BooleanField(
@@ -62,3 +71,37 @@ class User(AbstractUser):
     @property
     def is_ward_officer(self):
         return self.role == Role.WARD_OFFICER
+
+
+class PhoneVerificationCode(models.Model):
+    """
+    A single one-time code sent via Twilio SMS to confirm a user's phone
+    number. Deliberately its own small model rather than fields bolted
+    onto User — keeps a history of attempts and makes expiry/reuse logic
+    straightforward, and it's the natural home for rate-limiting later.
+    """
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="phone_verification_codes"
+    )
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} — {self.code} ({'used' if self.is_used else 'active'})"
+
+    def is_valid(self):
+        return not self.is_used and timezone.now() < self.expires_at
+
+    @classmethod
+    def generate_for(cls, user, ttl_minutes=10):
+        code = f"{random.randint(0, 999999):06d}"
+        return cls.objects.create(
+            user=user,
+            code=code,
+            expires_at=timezone.now() + timedelta(minutes=ttl_minutes),
+        )
