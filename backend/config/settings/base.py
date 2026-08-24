@@ -40,7 +40,7 @@ LOCAL_APPS = [
     "apps.media_library",
     "apps.notifications",
     "apps.alerts",
-    # Phase 6+: "apps.reports",
+    "apps.reports",
     # Phase 7+: "apps.ai_assistant",
 ]
 
