@@ -6,6 +6,8 @@ const adminLinks = [
   { to: "/admin", label: "Dashboard" },
   { to: "/admin/news", label: "News" },
   { to: "/admin/history", label: "Leaders / History" },
+  { to: "/admin/alerts", label: "Alerts" },
+  { to: "/admin/reports", label: "Reports" },
   { to: "/admin/media", label: "Media Library" },
 ];
 

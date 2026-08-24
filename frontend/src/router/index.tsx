@@ -4,10 +4,12 @@ import AdminLayout from "@/components/AdminLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PublicLayout from "@/components/PublicLayout";
 import LoginPage from "@/pages/LoginPage";
+import AlertBroadcasterPage from "@/pages/admin/AlertBroadcasterPage";
 import DashboardPage from "@/pages/admin/DashboardPage";
 import LeaderEditorPage from "@/pages/admin/LeaderEditorPage";
 import MediaUploadPage from "@/pages/admin/MediaUploadPage";
 import NewsEditorPage from "@/pages/admin/NewsEditorPage";
+import ReportQueuePage from "@/pages/admin/ReportQueuePage";
 import AlertsPage from "@/pages/public/AlertsPage";
 import CulturePage from "@/pages/public/CulturePage";
 import EventsPage from "@/pages/public/EventsPage";
@@ -45,6 +47,8 @@ export const router = createBrowserRouter([
       { index: true, element: <DashboardPage /> },
       { path: "news", element: <NewsEditorPage /> },
       { path: "history", element: <LeaderEditorPage /> },
+      { path: "alerts", element: <AlertBroadcasterPage /> },
+      { path: "reports", element: <ReportQueuePage /> },
       { path: "media", element: <MediaUploadPage /> },
     ],
   },
