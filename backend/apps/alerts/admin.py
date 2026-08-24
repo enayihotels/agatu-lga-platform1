@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db import transaction
 
 from .models import EmergencyAlert
 
@@ -19,6 +20,12 @@ class EmergencyAlertAdmin(admin.ModelAdmin):
         if is_new and not obj.created_by_id:
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
+
         if should_fan_out:
+            # Django admin wraps this whole save in a DB transaction.
+            # Dispatching the Celery task here directly would let a
+            # separate worker process query for this row before the
+            # transaction actually commits -- transaction.on_commit()
+            # defers the dispatch until the save is truly durable.
             from .tasks import fan_out_alert_sms
-            fan_out_alert_sms.delay(obj.id)
+            transaction.on_commit(lambda: fan_out_alert_sms.delay(obj.id))

@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import permissions, viewsets
 
 from apps.accounts.permissions import IsWardOfficerOrAbove
@@ -31,4 +32,7 @@ class EmergencyAlertViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         alert = serializer.save(created_by=self.request.user)
         if alert.send_sms:
-            fan_out_alert_sms.delay(alert.id)
+            # Deferred to after commit -- see apps/alerts/admin.py for
+            # why this matters even when this view isn't currently
+            # wrapped in an explicit transaction.
+            transaction.on_commit(lambda: fan_out_alert_sms.delay(alert.id))
