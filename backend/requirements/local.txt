@@ -1,4 +1,4 @@
--r base.txt
+﻿-r base.txt
 django-extensions==3.2.3
 pytest==8.3.4
 pytest-django==4.9.0

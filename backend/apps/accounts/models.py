@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+﻿from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -19,7 +19,7 @@ class Role(models.TextChoices):
 
 class User(AbstractUser):
     """
-    Custom user model — must exist before the first migration so future
+    Custom user model â€” must exist before the first migration so future
     role/profile fields never require a risky mid-project user-model swap.
     """
     role = models.CharField(

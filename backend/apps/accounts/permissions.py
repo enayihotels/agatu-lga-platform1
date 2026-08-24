@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission
+﻿from rest_framework.permissions import BasePermission
 
 
 class IsSuperAdmin(BasePermission):
@@ -9,7 +9,7 @@ class IsSuperAdmin(BasePermission):
 
 
 class IsContentEditor(BasePermission):
-    """Super admins and content editors — used for news/history/media CRUD."""
+    """Super admins and content editors â€” used for news/history/media CRUD."""
 
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated and request.user.is_content_editor)
@@ -28,7 +28,7 @@ class IsWardOfficerOrAbove(BasePermission):
 
 
 class IsVerifiedAccount(BasePermission):
-    """Any authenticated, non-service account — used for citizen reports, RSVPs, comments."""
+    """Any authenticated, non-service account â€” used for citizen reports, RSVPs, comments."""
 
     def has_permission(self, request, view):
         user = request.user

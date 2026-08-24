@@ -1,2 +1,2 @@
--r base.txt
+﻿-r base.txt
 sentry-sdk==2.19.2

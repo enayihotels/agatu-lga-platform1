@@ -32,8 +32,12 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.accounts",
-    # Phase 2+: "apps.history", "apps.news", "apps.wards", "apps.events",
-    # "apps.media_library", "apps.alerts", "apps.reports",
+    "apps.wards",
+    "apps.history",
+    "apps.news",
+    "apps.events",
+    "apps.media_library",
+    # Phase 5+: "apps.alerts", "apps.reports",
     # "apps.ai_assistant", "apps.notifications",
 ]
 
@@ -101,7 +105,23 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 
+# Phase 3 note: media currently saves to local disk (MEDIA_ROOT) above,
+# which is fine for development. Before deploying to Render, switch to
+# Cloudinary or S3-compatible storage via django-storages — Render's
+# disks aren't ideal for large media at scale. Example (uncomment and
+# fill in once you've picked a provider and installed django-storages):
+#
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
+# AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
+# AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", default="")
+# AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME", default="")
+# AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default="")
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# --- Media upload limits (media_library app) ---
+MEDIA_LIBRARY_MAX_UPLOAD_MB = env.int("MEDIA_LIBRARY_MAX_UPLOAD_MB", default=10)
 
 # --- DRF ---
 REST_FRAMEWORK = {
