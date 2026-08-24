@@ -21,8 +21,8 @@ urlpatterns = [
     path("api/news/", include("apps.news.urls")),
     path("api/events/", include("apps.events.urls")),
     path("api/media/", include("apps.media_library.urls")),
-    # Phase 3+: path("api/reports/", include("apps.reports.urls")),
-    # Phase 5+: path("api/alerts/", include("apps.alerts.urls")),
+    path("api/alerts/", include("apps.alerts.urls")),
+    # Phase 6+: path("api/reports/", include("apps.reports.urls")),
     # Phase 7+: path("api/ai/", include("apps.ai_assistant.urls")),
 ]
 

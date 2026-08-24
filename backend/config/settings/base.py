@@ -3,6 +3,7 @@ Base settings shared by local and production environments.
 """
 from pathlib import Path
 import environ
+from celery.schedules import crontab
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -37,8 +38,10 @@ LOCAL_APPS = [
     "apps.news",
     "apps.events",
     "apps.media_library",
-    # Phase 5+: "apps.alerts", "apps.reports",
-    # "apps.ai_assistant", "apps.notifications",
+    "apps.notifications",
+    "apps.alerts",
+    # Phase 6+: "apps.reports",
+    # Phase 7+: "apps.ai_assistant",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -107,7 +110,7 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 
 # Phase 3 note: media currently saves to local disk (MEDIA_ROOT) above,
 # which is fine for development. Before deploying to Render, switch to
-# Cloudinary or S3-compatible storage via django-storages — Render's
+# Cloudinary or S3-compatible storage via django-storages -- Render's
 # disks aren't ideal for large media at scale. Example (uncomment and
 # fill in once you've picked a provider and installed django-storages):
 #
@@ -145,6 +148,16 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
+
+# Recurring jobs, run by the celery_beat service. Kept as a plain Python
+# schedule (not django-celery-beat's DB-backed scheduler) since these
+# don't need to change from the admin -- simplest thing that works.
+CELERY_BEAT_SCHEDULE = {
+    "weekly-news-digest": {
+        "task": "apps.notifications.tasks.send_weekly_digest",
+        "schedule": crontab(day_of_week="monday", hour=8, minute=0),
+    },
+}
 
 # --- Twilio ---
 TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID", default="")
