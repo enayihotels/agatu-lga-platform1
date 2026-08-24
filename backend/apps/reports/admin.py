@@ -26,7 +26,15 @@ class CitizenReportAdmin(admin.ModelAdmin):
     list_filter = ("status", "category", "ward")
     search_fields = ("title", "description")
     inlines = [ReportPhotoInline, ReportStatusUpdateInline]
-    readonly_fields = ("submitted_by", "created_at", "updated_at")
+
+    def get_readonly_fields(self, request, obj=None):
+        # On the "add" form (obj is None) submitted_by must stay editable,
+        # otherwise there's no way to pick a submitter for a new report --
+        # it locks only once the report already exists, so it can't be
+        # silently reassigned to someone else after the fact.
+        if obj is None:
+            return ("created_at", "updated_at")
+        return ("submitted_by", "created_at", "updated_at")
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
