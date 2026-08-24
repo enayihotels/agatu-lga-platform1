@@ -7,12 +7,18 @@ and handed to it in the prompt, nothing more.
 import httpx
 from django.conf import settings
 
+# CPU-only inference on modest hardware (no GPU, limited RAM) can
+# genuinely take 1-2+ minutes for a "cold" first generation while the
+# model loads into memory -- 30 seconds was too aggressive and caused
+# every request to fail with a timeout regardless of model size.
+DEFAULT_TIMEOUT_SECONDS = 180.0
+
 
 class OllamaError(Exception):
     pass
 
 
-def generate(prompt: str, timeout: float = 30.0) -> str:
+def generate(prompt: str, timeout: float = DEFAULT_TIMEOUT_SECONDS) -> str:
     """
     Calls Ollama's /api/generate with streaming disabled -- the
     simplest integration for a synchronous request/response Q&A widget.
