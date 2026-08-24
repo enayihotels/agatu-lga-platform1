@@ -41,7 +41,7 @@ LOCAL_APPS = [
     "apps.notifications",
     "apps.alerts",
     "apps.reports",
-    # Phase 7+: "apps.ai_assistant",
+    "apps.ai_assistant",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

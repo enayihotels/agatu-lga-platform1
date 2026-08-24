@@ -20,6 +20,13 @@ services:
     ports:
       - "6379:6379"
 
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+
   backend:
     build:
       context: ./backend
@@ -69,8 +76,8 @@ services:
 
   # --- Added in later phases, listed here so docker-compose.yml only
   # needs small diffs as we go instead of a full rewrite each phase ---
-  # ollama:
   # frontend:
 
 volumes:
   pgdata:
+  ollama_data:
