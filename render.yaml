@@ -171,20 +171,3 @@ services:
     envVars:
       - key: VITE_API_BASE_URL
         value: https://agatu-backend.onrender.com/api
-
-  # --- Ollama (public "Ask AgatuConnect" model) ---
-  # Private service -- not publicly exposed, only reachable by the
-  # other services above via the internal hostname "agatu-ollama".
-  # Pick "plan" based on real RAM needs (~2GB+ recommended for
-  # llama3.2:1b) -- check current tier RAM on Render's own pricing
-  # page before choosing, since exact tier names/RAM may have changed.
-  - type: pserv
-    name: agatu-ollama
-    runtime: image
-    image:
-      url: docker.io/ollama/ollama:latest
-    plan: standard
-    disk:
-      name: agatu-ollama-models
-      mountPath: /root/.ollama
-      sizeGB: 5
