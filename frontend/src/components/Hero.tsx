@@ -10,9 +10,11 @@ const slides = [
   { src: governor, caption: "Rev. Fr. Dr. Hyacinth Iormem Alia, Governor of Benue State" },
 ];
 
+const welcomeWords = ["Welcome", "to", "Agatu", "Local", "Government"];
+
 export default function Hero() {
   return (
-    <div className="relative h-[420px] w-full overflow-hidden bg-agatu-earth-900 sm:h-[480px]">
+    <div className="relative h-[460px] w-full overflow-hidden bg-agatu-earth-900 sm:h-[560px]">
       {slides.map((slide, index) => (
         <div key={index} className="hero-slide absolute inset-0">
           <img
@@ -24,19 +26,29 @@ export default function Hero() {
       ))}
 
       {/* Gradient scrim for text legibility, on top of every slide */}
-      <div className="absolute inset-0 bg-gradient-to-t from-agatu-earth-900 via-agatu-earth-900/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-agatu-earth-900 via-agatu-earth-900/70 to-agatu-earth-900/20" />
 
-      <div className="animate-fade-up absolute inset-x-0 bottom-0 mx-auto max-w-4xl px-4 pb-10 text-white">
-        <p className="text-sm font-medium uppercase tracking-wide text-agatu-farm-200">
-          Benue State &middot; Est. 1996
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center text-white">
+        <p className="animate-fade-up mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-agatu-farm-200 sm:text-sm">
+          Benue State &middot; Established 1996
         </p>
-        <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
-          Welcome to AgatuConnect
+
+        <h1 className="max-w-3xl font-serif text-4xl font-extrabold leading-tight tracking-tight drop-shadow-lg sm:text-6xl">
+          {welcomeWords.map((word, index) => (
+            <span
+              key={index}
+              className="hero-word mr-3"
+              style={{ animationDelay: `${0.15 * index}s` }}
+            >
+              {word}
+            </span>
+          ))}
         </h1>
-        <p className="mt-2 max-w-xl text-agatu-earth-100">
-          Agatu &mdash; the food basket along the Benue River. News,
-          history, and culture from Agatu Local Government Area, home to
-          10 wards and a proud farming and fishing tradition.
+
+        <p className="animate-fade-up mt-5 max-w-xl text-base text-agatu-earth-100 sm:text-lg" style={{ animationDelay: "1.1s" }}>
+          The food basket along the Benue River &mdash; news, history, and
+          culture from Agatu&apos;s 10 wards and its proud farming and
+          fishing tradition.
         </p>
       </div>
     </div>

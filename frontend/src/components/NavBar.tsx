@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
+import InstallAppButton from "@/components/InstallAppButton";
 import { useAuthStore } from "@/store/authStore";
 
 const links = [
@@ -43,6 +44,7 @@ export default function NavBar() {
         </ul>
 
         <div className="hidden items-center gap-3 md:flex">
+          <InstallAppButton />
           {isAuthenticated ? (
             <Link
               to="/account"
@@ -86,6 +88,9 @@ export default function NavBar() {
       {/* Mobile menu panel */}
       {menuOpen && (
         <div className="border-t border-agatu-earth-200 bg-white px-4 py-3 md:hidden">
+          <div className="mb-3">
+            <InstallAppButton />
+          </div>
           <ul className="flex flex-col gap-2 text-sm">
             {links.map((link) => (
               <li key={link.to}>
