@@ -31,6 +31,44 @@ def _attach_image(instance, field_name, filename):
     return True
 
 
+from apps.wards.models import Ward
+
+WARD_DESCRIPTIONS = {
+    "Obagaji": (
+        "Contains the council headquarters of Obagaji, serving as the "
+        "primary political and economic center of Agatu Local Government "
+        "Area."
+    ),
+    "Oshigbudu": (
+        "Home to Oshigbudu, one of the largest and most commercially "
+        "active towns in the LGA."
+    ),
+    "Odugbeho": "Covers Odugbeho and surrounding riverine communities.",
+    "Okokolo": (
+        "Encompasses Okokolo, a prominent settlement deeply rooted in "
+        "farming."
+    ),
+    "Egba": "Centered around Egba village and its local markets.",
+    "Ogwule-Kaduna": (
+        "Covers major Ogwule clan settlements along the northern axis "
+        "near the River Benue floodplains."
+    ),
+    "Ogwule Ogbaulu": (
+        "Covers major Ogwule clan settlements along the northern axis "
+        "near the River Benue floodplains."
+    ),
+    "Ogbaulu": "An eastern hub bordering neighboring local governments.",
+    "Enungba": (
+        "A border-lying rural area highly critical for seasonal farming "
+        "and river navigation."
+    ),
+    "Usha": (
+        "A border-lying rural area highly critical for seasonal farming "
+        "and river navigation."
+    ),
+}
+
+
 class Command(BaseCommand):
     help = (
         "Seeds real Agatu LGA content: the current Executive Chairman "
@@ -42,6 +80,23 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
+        # --- Ward descriptions ---
+        # Only fills in descriptions for wards that don't have one yet
+        # (i.e. wards created by seed_wards with just a name) -- never
+        # overwrites a description an admin has since edited by hand.
+        ward_updates = 0
+        for name, description in WARD_DESCRIPTIONS.items():
+            updated = Ward.objects.filter(name=name, description="").update(
+                description=description,
+                is_lga_headquarters=(name == "Obagaji"),
+                headquarters_town=("Obagaji" if name == "Obagaji" else ""),
+            )
+            ward_updates += updated
+        self.stdout.write(self.style.SUCCESS(
+            f"Wards: updated descriptions for {ward_updates} ward(s) "
+            f"({Ward.objects.count()} total wards in the database)"
+        ))
+
         leader, created = Leader.objects.get_or_create(
             full_name="Hon. (Amb.) James Melvin Ejeh",
             defaults={
