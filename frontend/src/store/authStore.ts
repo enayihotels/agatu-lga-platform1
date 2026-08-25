@@ -1,14 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface AuthUser {
-  id: number;
-  username: string;
-  email: string;
-  role: string;
-  ward: number | null;
-  ward_name: string | null;
-}
+import type { UserProfile } from "@/schemas/user";
+
+type AuthUser = UserProfile;
 
 interface AuthState {
   accessToken: string | null;

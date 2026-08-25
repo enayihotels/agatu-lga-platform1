@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { getMe, login } from "@/api/auth";
@@ -35,7 +35,8 @@ export default function LoginPage() {
       const profile = await getMe();
       setUser(profile);
 
-      navigate("/admin");
+      const staffRoles = new Set(["super_admin", "content_editor", "ward_officer"]);
+      navigate(staffRoles.has(profile.role) ? "/admin" : "/account");
     } catch {
       setServerError("Invalid username or password.");
     }
@@ -44,7 +45,7 @@ export default function LoginPage() {
   return (
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4">
       <h1 className="mb-6 text-xl font-bold text-agatu-earth-900">
-        AgatuConnect Staff Login
+        Log in to AgatuConnect
       </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div>
@@ -93,6 +94,13 @@ export default function LoginPage() {
           {isSubmitting ? "Signing in..." : "Sign in"}
         </button>
       </form>
+
+      <p className="mt-4 text-center text-sm text-agatu-earth-600">
+        Don&apos;t have an account?{" "}
+        <Link to="/signup" className="font-medium text-agatu-farm-700">
+          Sign up
+        </Link>
+      </p>
     </div>
   );
 }

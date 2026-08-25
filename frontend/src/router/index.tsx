@@ -3,7 +3,9 @@ import { createBrowserRouter } from "react-router-dom";
 import AdminLayout from "@/components/AdminLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import PublicLayout from "@/components/PublicLayout";
+import AccountPage from "@/pages/AccountPage";
 import LoginPage from "@/pages/LoginPage";
+import SignupPage from "@/pages/SignupPage";
 import AlertBroadcasterPage from "@/pages/admin/AlertBroadcasterPage";
 import DashboardPage from "@/pages/admin/DashboardPage";
 import LeaderEditorPage from "@/pages/admin/LeaderEditorPage";
@@ -36,10 +38,19 @@ export const router = createBrowserRouter([
     ],
   },
   { path: "/login", element: <LoginPage /> },
+  { path: "/signup", element: <SignupPage /> },
+  {
+    path: "/account",
+    element: (
+      <ProtectedRoute>
+        <AccountPage />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/admin",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute staffOnly>
         <AdminLayout />
       </ProtectedRoute>
     ),

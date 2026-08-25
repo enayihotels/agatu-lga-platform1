@@ -1,15 +1,13 @@
 @import "tailwindcss";
 
 /*
-  Agatu LGA design tokens. Tailwind v4 uses CSS-based theming (no
-  tailwind.config.js needed) -- these custom properties become usable
-  as e.g. bg-agatu-river, text-agatu-earth, etc. throughout the app.
+  Agatu LGA design tokens. Tailwind v4 uses CSS-based theming -- these
+  custom properties become usable as e.g. bg-agatu-river, text-agatu-earth.
 
-  Palette rationale: earth tones for the land/agriculture identity,
-  a river-blue and farmland-green pair as the primary accent colors
-  (Agatu sits on the Benue River and is a farming community), with a
-  warm amber reserved for alerts/flood-warning UI so it reads as
-  distinct and urgent against the calmer base palette.
+  Palette: earth tones for the land/agriculture identity, a river-blue
+  and farmland-green pair as the primary accents (Agatu sits on the
+  Benue River and is a major farming/fishing community), warm amber
+  reserved for alerts so it reads as distinct and urgent.
 */
 @theme {
   --color-agatu-earth-50: #faf6f1;
@@ -45,9 +43,6 @@
   --color-agatu-farm-800: #2b451e;
   --color-agatu-farm-900: #1e3115;
 
-  /* Reserved for EmergencyAlert severity UI -- kept visually distinct
-     from the calmer earth/river/farm palette above so alerts always
-     read as urgent, never blend into ordinary content. */
   --color-agatu-alert-info: #2d8286;
   --color-agatu-alert-warning: #c47f1f;
   --color-agatu-alert-critical: #b3372c;
@@ -58,4 +53,43 @@
 
 body {
   @apply bg-agatu-earth-50 text-agatu-earth-900 antialiased;
+}
+
+/* --- Hero crossfade animation --- */
+@keyframes hero-crossfade {
+  0%, 22% { opacity: 1; }
+  28%, 100% { opacity: 0; }
+}
+
+.hero-slide {
+  animation: hero-crossfade 16s infinite;
+  animation-fill-mode: both;
+}
+.hero-slide:nth-child(1) { animation-delay: 0s; }
+.hero-slide:nth-child(2) { animation-delay: 4s; }
+.hero-slide:nth-child(3) { animation-delay: 8s; }
+.hero-slide:nth-child(4) { animation-delay: 12s; }
+
+/* Slow, subtle zoom -- a classic "Ken Burns" feel without needing JS */
+@keyframes hero-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+.hero-zoom {
+  animation: hero-zoom 16s ease-in-out infinite alternate;
+}
+
+/* Gentle entrance for text/cards as they mount */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide, .hero-zoom, .animate-fade-up {
+    animation: none !important;
+  }
 }
