@@ -1,44 +1,42 @@
-﻿# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-.Python
-venv/
-env/
-.venv/
-
-# Django
-*.sqlite3
-/backend/staticfiles/
-/backend/mediafiles/
-/backend/media/
-
-# Env
+# --- Environment / secrets ---
 .env
-.env.*
-!.env.example
+.env.local
+*.local
 
-# Node / frontend
+# --- Python ---
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+
+# --- Django ---
+staticfiles/
+mediafiles/
+db.sqlite3
+
+# --- Celery ---
+celerybeat-schedule
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
+
+# --- Node / frontend ---
 node_modules/
-frontend/dist/
-frontend/.vite/
-npm-debug.log*
+dist/
+dist-ssr/
 
-# Docker
-*.pid
-
-# IDE
+# --- Editor / OS ---
 .vscode/*
 !.vscode/extensions.json
 .idea/
-
-# OS
 .DS_Store
-Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# Ollama local data (docker volume handles this, but just in case)
-ollama_data/
+# --- Logs ---
+*.log
+npm-debug.log*
